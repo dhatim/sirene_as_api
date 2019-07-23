@@ -4,3 +4,4 @@
 /solr/production/data/*
 /solr/test/data/*
 /tmp/
+/log/

@@ -1,11 +1,22 @@
 defaults: &defaults
   adapter: postgresql
   encoding: unicode
-  host: db
+  host: <%= ENV['DEV_DB_HOST'] %>
   pool: 5
-  username: postgres
-  password: password
+  username: <%= ENV['DEV_DB_USERNAME'] %>
+  password: <%= ENV['DEV_DB_PASSWORD'] %>
 
 development:
-  database: sirene_as_api_docker
   <<: *defaults
+  database: <%= ENV['DEV_DB'] %>
+
+production:
+  adapter: postgresql
+  encoding: unicode
+  database: <%= ENV['PROD_DB'] %>
+  host: <%= ENV['PROD_DB_HOST'] %>
+  port: <%= ENV['PROD_DB_PORT'] %>
+  pool: <%= ENV['PROD_POOL_DB'] ? ENV['PROD_POOL_DB'].to_i : 5 %>
+  username: <%= ENV['PROD_DB_USERNAME'] %>
+  password: <%= ENV['PROD_DB_PASSWORD'] %>
+

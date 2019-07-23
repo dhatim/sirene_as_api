@@ -1,28 +1,48 @@
 version: '3'
 services:
   db:
-    image: postgres:9.6.13
+    image: ${POSTGRES_IMAGE}
     ports:
-      - "5433:5432"
+      - "${HOST_DB_PORT}:5432"
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=sirene_as_api_docker
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
       - PGDATA=/var/lib/postgresql/data
     volumes:
-      - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - /var/lib/postgresql/data:/var/lib/postgresql/data
+      - ${INITDB_FOLDER}:/docker-entrypoint-initdb.d/
+      - ${POSTGRES_DATA}:/var/lib/postgresql/data
+
   sirene:
-    build: .
+    build: ${HOST_APP_FOLDER}
+    image: ${SIRENE_IMAGE_NAME}
     command: bin/rails server --port 3000 --binding 0.0.0.0
     ports:
-      - "3001:3000"
+      - "${HOST_SOLR_PORT}:3000"
     environment:
-      - RAILS_ENV=development
-      - PGHOST=db
-      - PGUSER=postgres
+      - RAILS_ENV=${RAILS_ENV}
+      - PGHOST=${PGHOST}
+      - PGUSER=${PGUSER}
+      - PROD_DB=${PROD_DB}
+      - PROD_DB_HOST=${PROD_DB_HOST}
+      - PROD_DB_PORT=${PROD_DB_PORT}
+      - PROD_POOL_DB=${PROD_POOL_DB}
+      - PROD_DB_USERNAME=${PROD_DB_USERNAME}
+      - PROD_DB_PASSWORD=${PROD_DB_PASSWORD}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      # only for development environment
+      - DEV_DB=${DEV_DB}
+      - DEV_DB_HOST=${DEV_DB_HOST}
+      - DEV_DB_USERNAME=${DEV_DB_USERNAME}
+      - DEV_DB_PASSWORD=${DEV_DB_PASSWORD}
+
     volumes:
-      - ./.last_monthly_stock_applied/:/docker_build/.last_monthly_stock_applied/
-      - ./tmp/:/docker_build/tmp/
-    links:
-      - db
+      - ${HOST_APP_FOLDER}/.last_monthly_stock_applied/:/docker_build/.last_monthly_stock_applied/
+      - ${HOST_APP_FOLDER}/tmp/:/docker_build/tmp/
+      - ${HOST_APP_FOLDER}/log/:/docker_build/log/
+      - ${SOLR_DATA}/solr/default/data/:/docker_build/solr/default/data/
+      - ${SOLR_DATA}/solr/development/data/:/docker_build/solr/development/data/
+      - ${SOLR_DATA}/solr/sandbox/data/:/docker_build/solr/sandbox/data/
+      - ${SOLR_DATA}/solr/production/data/:/docker_build/solr/production/data/
+      - ${SOLR_DATA}/solr/test/data/:/docker_build/solr/test/data/
+

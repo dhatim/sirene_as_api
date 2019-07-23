@@ -27,8 +27,8 @@
 
 # Ignore solr data
 /solr/default/data/*
-/solr/development/*
-/solr/test/*
+/solr/development/data/*
+/solr/test/data/*
 /solr/production/data/*
 /solr/sandbox/data/*
 

@@ -30,6 +30,10 @@ services:
       - PROD_DB_USERNAME=${PROD_DB_USERNAME}
       - PROD_DB_PASSWORD=${PROD_DB_PASSWORD}
       - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - SENTRY_DSN_KEY=${SENTRY_DSN_KEY}
+      - GRAYLOG_HOST=${GRAYLOG_HOST}
+      - GRAYLOG_PORT=${GRAYLOG_PORT}
+      - GRAYLOG_OVH_KEY=${GRAYLOG_OVH_KEY}
       # only for development environment
       - DEV_DB=${DEV_DB}
       - DEV_DB_HOST=${DEV_DB_HOST}

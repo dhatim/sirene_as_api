@@ -51,6 +51,11 @@ gem 'whenever', require: false
 
 gem 'sitemap_generator'
 
+# sentry logs
+gem 'sentry-raven'
+# graylogs
+gem 'gelf'
+
 group :development, :test do
   gem 'byebug', platform: :mri
   gem 'colorize'

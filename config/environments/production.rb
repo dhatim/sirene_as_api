@@ -1,3 +1,6 @@
+require 'sentry-raven'
+require 'gelf'
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -49,4 +52,24 @@ Rails.application.configure do
   config.logstasher.suppress_app_logs = false
   config.logstasher.log_controller_parameters = true
   config.logstasher.backtrace = true
+
+
+
+  Raven.configure do |config|
+    config.dsn = ENV['SENTRY_DSN_KEY']
+  end
+  
+  config.logger = Logger.new("#{Rails.root}/log/interactor.log")
+  config.logger.extend(ActiveSupport::Logger.broadcast(GELF::Logger.new(ENV['GRAYLOG_HOST'],
+                                        ENV['GRAYLOG_PORT'],
+                                        "WAN",
+                                        { :facility => 'invoice_entry',
+                                          :_component => 'sirene',
+                                          :"_X-OVH-TOKEN" => ENV['GRAYLOG_OVH_KEY'],
+                                          :protocol => GELF::Protocol::TCP,
+                                          :tls => {'no_default_ca' => false, 'all_ciphers' => true} })))
+
+
+  config.log_level = :warn
+
 end

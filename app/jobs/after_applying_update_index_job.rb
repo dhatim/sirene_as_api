@@ -12,7 +12,9 @@ class AfterApplyingUpdateIndexJob < SireneAsAPIInteractor
   end
 
   def indexes_to_add_queries
-    ["CREATE INDEX CONCURRENTLY IF NOT EXISTS index_etablissements_on_siret ON public.etablissements USING btree (siret)",
+    ["CREATE INDEX CONCURRENTLY IF NOT EXISTS trgm_idx_etablissements_on_siret ON etablissements USING gin(siret gin_trgm_ops)",
+     "CREATE INDEX CONCURRENTLY IF NOT EXISTS trgm_idx_etablissements_on_siren ON etablissements USING gin(siren gin_trgm_ops)",
+     "CREATE INDEX CONCURRENTLY IF NOT EXISTS index_etablissements_on_siret ON public.etablissements USING btree (siret)",
      "CREATE INDEX CONCURRENTLY IF NOT EXISTS index_etablissements_on_siren ON public.etablissements USING btree (siren)",
      "CREATE INDEX CONCURRENTLY IF NOT EXISTS entreprises_to_tsvector_idx ON public.etablissements USING gin (to_tsvector('french'::regconfig, (siren)::text))",
      "CREATE INDEX CONCURRENTLY IF NOT EXISTS entreprises_to_tsvector_idx1 ON public.etablissements USING gin (to_tsvector('french'::regconfig, (siret)::text))",

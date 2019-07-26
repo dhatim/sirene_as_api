@@ -10,6 +10,8 @@ class DropAllIndexes < SireneAsAPIInteractor
 
   def indexes_to_be_removed
     %w(
+     trgm_idx_etablissements_on_siren
+     trgm_idx_etablissements_on_siret
      entreprises_to_tsvector_idx
      entreprises_to_tsvector_idx1
      entreprises_to_tsvector_idx2

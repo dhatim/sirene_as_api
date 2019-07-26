@@ -11,7 +11,7 @@ class BeforeApplyingUpdateIndexJob < SireneAsAPIInteractor
         ActiveRecord::Base.connection.execute("DROP INDEX CONCURRENTLY IF EXISTS #{index}")
       end
       stdout_success_log("Indexes dropped")
-      
+
       indexes_needed_if_not_exists_queries.each do |query|
         stdout_info_log("Executing : #{query}")
         ActiveRecord::Base.connection.execute(query)
@@ -37,6 +37,8 @@ class BeforeApplyingUpdateIndexJob < SireneAsAPIInteractor
 
   def indexes_needed_if_not_exists_queries
     [
+      "CREATE INDEX CONCURRENTLY IF NOT EXISTS trgm_idx_etablissements_on_siret ON etablissements USING gin(siret gin_trgm_ops)",
+      "CREATE INDEX CONCURRENTLY IF NOT EXISTS trgm_idx_etablissements_on_siren ON etablissements USING gin(siren gin_trgm_ops)",
       "CREATE INDEX CONCURRENTLY IF NOT EXISTS index_etablissements_on_siret ON etablissements USING btree (siret)",
       "CREATE INDEX CONCURRENTLY IF NOT EXISTS index_etablissements_on_siren ON public.etablissements USING btree (siren)"
     ]

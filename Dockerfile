@@ -17,7 +17,7 @@ RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 
 ADD Gemfile* $APP_HOME/
-RUN bundle install
+RUN gem install bundler && bundle install
 
 ADD . $APP_HOME/
 

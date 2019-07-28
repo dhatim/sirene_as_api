@@ -49,4 +49,3 @@ services:
       - ${SOLR_DATA}/solr/sandbox/data/:/docker_build/solr/sandbox/data/
       - ${SOLR_DATA}/solr/production/data/:/docker_build/solr/production/data/
       - ${SOLR_DATA}/solr/test/data/:/docker_build/solr/test/data/
-

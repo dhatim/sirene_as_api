@@ -50,5 +50,5 @@ Rails.application.configure do
   config.logstasher.log_controller_parameters = true
   config.logstasher.backtrace = true
 
-  config.logger = Logger.new("#{Rails.root}/log/interactor.log")
+  config.logger = Logger.new("#{Rails.root}/log/development.log")
 end

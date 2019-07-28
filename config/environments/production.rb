@@ -54,11 +54,12 @@ Rails.application.configure do
   config.logstasher.backtrace = true
 
 
-
-  Raven.configure do |config|
-    config.dsn = ENV['SENTRY_DSN_KEY']
+  if ENV['SENTRY_ENABLE'] == 'true'
+    Raven.configure do |config|
+      config.dsn = ENV['SENTRY_DSN_KEY']
+    end
   end
-  
+
   config.logger = Logger.new("#{Rails.root}/log/production.log")
 
   if ENV['GRAYLOG_ENABLE'] == 'true'
@@ -76,7 +77,7 @@ Rails.application.configure do
                                       ENV['GRAYLOG_PORT'],
                                       'WAN',
                                       options)
-    # graylog_logger.level = 5
+
     config.logger.extend(ActiveSupport::Logger.broadcast(graylog_logger))
   end
 

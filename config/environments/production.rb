@@ -59,17 +59,26 @@ Rails.application.configure do
     config.dsn = ENV['SENTRY_DSN_KEY']
   end
   
-  config.logger = Logger.new("#{Rails.root}/log/interactor.log")
-  config.logger.extend(ActiveSupport::Logger.broadcast(GELF::Logger.new(ENV['GRAYLOG_HOST'],
-                                        ENV['GRAYLOG_PORT'],
-                                        "WAN",
-                                        { :facility => 'invoice_entry',
-                                          :_component => 'sirene',
-                                          :"_X-OVH-TOKEN" => ENV['GRAYLOG_OVH_KEY'],
-                                          :protocol => GELF::Protocol::TCP,
-                                          :tls => {'no_default_ca' => false, 'all_ciphers' => true} })))
+  config.logger = Logger.new("#{Rails.root}/log/production.log")
 
+  if ENV['GRAYLOG_ENABLE'] == 'true'
+    options = { :facility => ENV['GRAYLOG_FACILITY'],
+                :_component => ENV['GRAYLOG_COMPONENT'],
+                :"_X-OVH-TOKEN" => ENV['GRAYLOG_OVH_KEY'],
+                :protocol => GELF::Protocol::TCP,
+               }
+
+    if ENV['GRAYLOG_USE_TLS'] == 'true'
+      options[:tls] = {'no_default_ca' => false, 'all_ciphers' => true}
+    end
+
+    graylog_logger = GELF::Logger.new(ENV['GRAYLOG_HOST'],
+                                      ENV['GRAYLOG_PORT'],
+                                      'WAN',
+                                      options)
+    # graylog_logger.level = 5
+    config.logger.extend(ActiveSupport::Logger.broadcast(graylog_logger))
+  end
 
   config.log_level = :warn
-
 end

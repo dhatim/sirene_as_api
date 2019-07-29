@@ -34,7 +34,8 @@ class SolrRequests < SireneAsAPIInteractor
 
   def request_build_dictionary
     http_session = Net::HTTP.new('localhost', solr_port)
-    http_session.read_timeout = 14_400 # 4 hours max to build dictionary
+    # http_session.read_timeout = 14_400 # 4 hours max to build dictionary
+    http_session.read_timeout = 60 * 60 * 10 # 10 hours
     uri = "/solr/#{Rails.env}/suggesthandler?suggest.build=true"
     http_session.get(uri)
   end

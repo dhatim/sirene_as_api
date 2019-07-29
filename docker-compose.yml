@@ -1,0 +1,57 @@
+version: '3'
+services:
+  db:
+    image: ${POSTGRES_IMAGE}
+    ports:
+      - "${HOST_DB_PORT}:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - PGDATA=/var/lib/postgresql/data
+    volumes:
+      - ${INITDB_FOLDER}:/docker-entrypoint-initdb.d/
+      - ${POSTGRES_DATA}:/var/lib/postgresql/data
+
+  sirene:
+    build: ${HOST_APP_FOLDER}
+    image: ${SIRENE_IMAGE_NAME}
+    command: bin/rails server --port 3000 --binding 0.0.0.0
+    ports:
+      - "${HOST_SOLR_PORT}:3000"
+    environment:
+      - RAILS_ENV=${RAILS_ENV}
+      - PGHOST=${PGHOST}
+      - PGUSER=${PGUSER}
+      - PROD_DB=${PROD_DB}
+      - PROD_DB_HOST=${PROD_DB_HOST}
+      - PROD_DB_PORT=${PROD_DB_PORT}
+      - PROD_POOL_DB=${PROD_POOL_DB}
+      - PROD_DB_USERNAME=${PROD_DB_USERNAME}
+      - PROD_DB_PASSWORD=${PROD_DB_PASSWORD}
+      # production specific
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - SENTRY_ENABLE=${SENTRY_ENABLE}
+      - SENTRY_DSN_KEY=${SENTRY_DSN_KEY}
+      - GRAYLOG_ENABLE=${GRAYLOG_ENABLE}
+      - GRAYLOG_USE_TLS=${GRAYLOG_USE_TLS}
+      - GRAYLOG_FACILITY=${GRAYLOG_FACILITY}
+      - GRAYLOG_COMPONENT=${GRAYLOG_COMPONENT}
+      - GRAYLOG_HOST=${GRAYLOG_HOST}
+      - GRAYLOG_PORT=${GRAYLOG_PORT}
+      - GRAYLOG_OVH_KEY=${GRAYLOG_OVH_KEY}
+      # only for development environment
+      - DEV_DB=${DEV_DB}
+      - DEV_DB_HOST=${DEV_DB_HOST}
+      - DEV_DB_USERNAME=${DEV_DB_USERNAME}
+      - DEV_DB_PASSWORD=${DEV_DB_PASSWORD}
+
+    volumes:
+      - ${HOST_APP_FOLDER}/.last_monthly_stock_applied/:/docker_build/.last_monthly_stock_applied/
+      - ${HOST_APP_FOLDER}/tmp/:/docker_build/tmp/
+      - ${HOST_APP_FOLDER}/log/:/docker_build/log/
+      - ${SOLR_DATA}/solr/default/data/:/docker_build/solr/default/data/
+      - ${SOLR_DATA}/solr/development/data/:/docker_build/solr/development/data/
+      - ${SOLR_DATA}/solr/sandbox/data/:/docker_build/solr/sandbox/data/
+      - ${SOLR_DATA}/solr/production/data/:/docker_build/solr/production/data/
+      - ${SOLR_DATA}/solr/test/data/:/docker_build/solr/test/data/

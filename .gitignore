@@ -27,8 +27,8 @@
 
 # Ignore solr data
 /solr/default/data/*
-/solr/development/*
-/solr/test/*
+/solr/development/data/*
+/solr/test/data/*
 /solr/production/data/*
 /solr/sandbox/data/*
 
@@ -47,5 +47,11 @@ sunspot-solr.pid
 # Ignore last_monthly_stock_link storage
 /.last_monthly_stock_applied/*
 
+# Ignore custom environment variables files for docker
+*.env
+
 # Ignore code coverage report
 coverage/*
+
+#ignore ide configs
+.idea/

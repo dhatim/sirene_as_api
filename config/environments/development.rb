@@ -49,4 +49,6 @@ Rails.application.configure do
   config.logstasher.suppress_app_logs = false
   config.logstasher.log_controller_parameters = true
   config.logstasher.backtrace = true
+
+  config.logger = Logger.new("#{Rails.root}/log/development.log")
 end

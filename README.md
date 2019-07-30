@@ -275,7 +275,36 @@ Une fois cloné ce répertoire à l'aide de
 
     git clone git@github.com:etalab/sirene_as_api.git && cd sirene_as_api
 
+### Contruire l'image et lancer le container
+#### Avec docker-compose
+
 Construisez le container avec `docker-compose build` et lancez-le avec `docker-compose up`.
+
+#### Sans docker-compose
+
+    docker build . -t sirene_etalab
+    
+Une fois l'image `sirene_etalab` créée, vous pouvez lancer le container avec une commande de la forme :
+
+    docker run --name sirene_etalab -p 3000:3000 \
+    -v '/path/to/sirene_as_api/last_monthly_stock_applied/:/docker_build/.last_monthly_stock_applied/' \
+    -v '/path/to/sirene_as_api/tmp/:/docker_build/tmp/' \
+    -v '/path/to/sirene_as_api/log/:/docker_build/log/' \
+    -v '/path/to/sirene_as_api/solr/production/data/:/docker_build/solr/production/data/' \
+    -e RAILS_ENV=production \
+    -e PROD_DB=sirene_as_api_docker_production \
+    -e PROD_DB_HOST=somehost \
+    -e PROD_DB_PORT=5432 \
+    -e PROD_DB_USERNAME=sirene_etalab \
+    -e PROD_DB_PASSWORD=prod \
+    -e PROD_POOL_DB=15 \
+    -e SECRET_KEY_BASE=\'somekey\' \
+    sirene_etalab:latest \
+    bin/rails server --port 3000 --binding 0.0.0.0
+    
+    
+Libre à vous de configurer les différents services.
+
 
 Pour faciliter l'interaction avec le container du serveur, il est conseillé d'utiliser le mode interactif (à partir d'un autre terminal) :
 
@@ -308,6 +337,45 @@ La recherche fulltext devrait fonctionner après avoir executé `docker-compose 
 Attention : pour faciliter les modifications par nos utilisateurs, le docker est lancé en environnement de développement. N'oubliez pas de changer le mot de passe postgres dans /config/docker/init.sql, /config/docker/database.yml et docker-compose.yml.
 
 Il peut y avoir une erreur 500 Solr au premier lancement, dans ce cas un simple `docker-compose down` puis `docker-compose up` peut suffir à relancer le server correctement.
+
+## Configuration
+Les variables d'environnement suivantes sont utilisables pour paramétrer votre container docker (à relancer après chaque modification):
+
+| Environment variable | Description |
+| -------------------- | ----------- |
+| **SIRENE API Rails environment** |
+| `RAILS_ENV` | `development` or `production` |
+| **Secret key in production** | |
+| `SECRET_KEY_BASE` | The secret key is used for verifying the integrity of signed cookies |
+| **Logging in production** | |
+| `SENTRY_ENABLE` | `true` to enable Sentry, every other value to disable |
+| `SENTRY_DSN_KEY` | Sentry Data Source Name |
+| `GRAYLOG_ENABLE` | `true` to enable Graylog, every other value to disable |
+| `GRAYLOG_HOST` | Graylog host |
+| `GRAYLOG_PORT` | Graylog port |
+| `GRAYLOG_OVH_KEY` | Graylog key/token for OVH |
+| `GRAYLOG_USE_TLS` | `true` to use TLS for communication, every other value to disable |
+| `GRAYLOG_FACILITY` | Graylog facility name |
+| `GRAYLOG_COMPONENT` | Graylog component name |
+| **Database connection for production** | |
+| `PROD_DB_HOST` | Database host. Example `localhost` |
+| `PROD_DB_PORT` | Database port. Example `5432` |
+| `PROD_DB` | Database name |
+| `PROD_POOL_DB` | Maximum size of pool connections required. Default value is `5` |
+| `PROD_DB_USERNAME` | Database user's username that has read/write rights on `PROD_DB` |
+| `PROD_DB_PASSWORD` | Database user password for `PROD_DB_USERNAME` |
+
+Les volumes du container à monter:
+ 
+| Volume | Description |
+| -------------------- | ----------- |
+| /docker_build/.last_monthly_stock_applied/ | Folder containing a file named `last_monthly_stock_link_name.txt` which is saving the last stock file link |
+| /docker_build/tmp/ | Contains temporary files used for monthly and daily updates |
+| /docker_build/log/ | Contains locally saved logs |
+| /docker_build/solr/development/data/ | Contains solr indexes for `development` environment |
+| /docker_build/solr/production/data/ | Contains solr indexes for `production` environment |
+
+Le port du container à mapper pour le serveur est le port `3000` par défaut.
 
 ## Installation manuelle en environnement dev
 

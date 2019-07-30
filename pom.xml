@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.dhatim</groupId>
+    <artifactId>root</artifactId>
+    <version>38.3.0</version>
+  </parent>
+
+  <groupId>com.dhatim</groupId>
+  <artifactId>docker-sirene_etalab</artifactId>
+  <packaging>pom</packaging>
+  <version>0-SNAPSHOT</version>
+
+  <properties>
+    <dockertag>latest</dockertag>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>createbuildnumber</id>
+            <goals>
+              <goal>create</goal>
+            </goals>
+            <phase>initialize</phase>
+            <configuration>
+              <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <configuration>
+          <images>
+            <image>
+              <name>docker.dhatim.it/sirene_etalab:${dockertag}</name>
+              <alias>sirene_etalab</alias>
+            </image>
+          </images>
+          <dockerDirectory>.</dockerDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <id>build</id>
+            <phase>package</phase>
+            <goals>
+              <goal>build</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <repositories>
+    <repository>
+      <id>libs-release</id>
+      <name>libs-release</name>
+      <url>http://artifactory.dhatim.it/artifactory/libs-release</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+</project>

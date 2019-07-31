@@ -1,5 +1,5 @@
 class SelectAndApplyPatches
   include Interactor::Organizer
 
-  organize GetRelevantPatchesLinks, BeforeApplyingUpdateIndexJob, ApplyPatches, AfterApplyingUpdateIndexJob
+  organize GetRelevantPatchesLinks, ApplyPatches, AfterApplyingUpdateIndexJob
 end

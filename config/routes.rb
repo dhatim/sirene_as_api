@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     get 'siren/:siren' => '/api/v1/siren#show'
     get 'siren_like/:siren' => '/api/v1/siren_like#show'
     get 'siret_like/:siret' => '/api/v1/siret_like#show'
+    get 'nom_adresse/:text' => '/api/v1/nom_adresse#show'
     get 'full_text/:text' => '/api/v1/full_text#show'
     get 'suggest/:suggest_query' => '/api/v1/suggest#show'
     get 'near_etablissement/:siret' => '/api/v1/near_etablissement#show'

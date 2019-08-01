@@ -1,8 +1,8 @@
 class API::V1::NomAdresseController < ApplicationController
   def show
-    query = nom_adresse_params[:text]
-    r = Etablissement.where("nom_raison_sociale ILIKE :query OR l4_normalisee ILIKE :query OR l6_normalisee ILIKE :query",
-                            query: "#{query}%").limit(20)
+    query = nom_adresse_params[:text].split().join('%')
+    r = Etablissement.where("nom_raison_sociale || ' ' || l4_normalisee || ' ' || l6_normalisee ILIKE :query",
+                            query: "%#{query}%").limit(20)
 
 
     if r.nil?

@@ -1,5 +1,6 @@
 class KeepMinIndexAddTrgm < ActiveRecord::Migration[5.0]
 
+  execute "CREATE INDEX CONCURRENTLY IF NOT EXISTS trgm_idx_nom_raison_sociale_l4_l6 ON etablissements USING gin ((nom_raison_sociale || ' ' || l4_normalisee || ' ' || l6_normalisee) gin_trgm_ops);"
   execute "CREATE INDEX CONCURRENTLY IF NOT EXISTS trgm_on_nom_raison_sociale ON etablissements USING gin (nom_raison_sociale gin_trgm_ops);"
   execute "CREATE INDEX CONCURRENTLY IF NOT EXISTS trgm_on_l6_normalisee ON etablissements USING gin (l6_normalisee gin_trgm_ops);"
   execute "CREATE INDEX CONCURRENTLY IF NOT EXISTS trgm_on_l4_normalisee ON etablissements USING gin (l4_normalisee gin_trgm_ops);"

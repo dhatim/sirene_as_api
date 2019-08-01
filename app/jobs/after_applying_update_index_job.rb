@@ -12,7 +12,8 @@ class AfterApplyingUpdateIndexJob < SireneAsAPIInteractor
   end
 
   def indexes_to_add_queries
-    ["CREATE INDEX CONCURRENTLY IF NOT EXISTS trgm_idx_etablissements_on_siret ON etablissements USING gin(siret gin_trgm_ops)",
+    ["CREATE INDEX CONCURRENTLY IF NOT EXISTS trgm_idx_nom_raison_sociale_l4_l6 ON etablissements USING gin ((nom_raison_sociale || ' ' || l4_normalisee || ' ' || l6_normalisee) gin_trgm_ops)",
+     "CREATE INDEX CONCURRENTLY IF NOT EXISTS trgm_idx_etablissements_on_siret ON etablissements USING gin(siret gin_trgm_ops)",
      "CREATE INDEX CONCURRENTLY IF NOT EXISTS trgm_idx_etablissements_on_siren ON etablissements USING gin(siren gin_trgm_ops)",
      "CREATE INDEX CONCURRENTLY IF NOT EXISTS trgm_on_nom_raison_sociale ON etablissements USING gin (nom_raison_sociale gin_trgm_ops)",
      "CREATE INDEX CONCURRENTLY IF NOT EXISTS trgm_on_l6_normalisee ON etablissements USING gin (l6_normalisee gin_trgm_ops)",

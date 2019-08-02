@@ -1,7 +1,7 @@
 class AfterApplyingUpdateIndexJob < SireneAsAPIInteractor
 
   def call
-    stdout_warn_log("Creating necessary indexes for database")
+    stdout_info_log("Creating necessary indexes for database")
 
     indexes_to_add_queries.each do |query|
       stdout_info_log("Executing : #{query}")

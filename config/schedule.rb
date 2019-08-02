@@ -1,5 +1,6 @@
 # Learn more: http://github.com/javan/whenever
 set :output, File.join(Whenever.path, 'log', 'sirene_api_cron.log')
+set :chronic_options, hours24: true
 
 # environment var is set with
 # whenever --set 'environment=VALUE'
@@ -19,8 +20,8 @@ end
 if environment == 'production'
   # CRON Job for single server update, uncomment if you have a single server
 
-  every 1.day, at: '9:45 pm' do
-    command "date"
+  time = ENV['AUTO_UPDATE_TIME'] ? ENV['AUTO_UPDATE_TIME'] : '0:00'
+  every 1.day, at: time do
     rake 'sirene_as_api:automatic_update_database'
   end
 

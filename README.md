@@ -348,13 +348,13 @@ Les variables d'environnement suivantes sont utilisables pour paramétrer votre 
 | **Secret key in production** | |
 | `SECRET_KEY_BASE` | The secret key is used for verifying the integrity of signed cookies |
 | **Logging in production** | |
-| `SENTRY_ENABLE` | `true` to enable Sentry, every other value to disable |
+| `SENTRY_ENABLE` | `true` to enable Sentry, any other value to disable |
 | `SENTRY_DSN_KEY` | Sentry Data Source Name |
-| `GRAYLOG_ENABLE` | `true` to enable Graylog, every other value to disable |
+| `GRAYLOG_ENABLE` | `true` to enable Graylog, any other value to disable |
 | `GRAYLOG_HOST` | Graylog host |
 | `GRAYLOG_PORT` | Graylog port |
 | `GRAYLOG_OVH_KEY` | Graylog key/token for OVH |
-| `GRAYLOG_USE_TLS` | `true` to use TLS for communication, every other value to disable |
+| `GRAYLOG_USE_TLS` | `true` to use TLS for communication, any other value to disable |
 | `GRAYLOG_FACILITY` | Graylog facility name |
 | `GRAYLOG_COMPONENT` | Graylog component name |
 | **Database connection for production** | |
@@ -364,6 +364,9 @@ Les variables d'environnement suivantes sont utilisables pour paramétrer votre 
 | `PROD_POOL_DB` | Maximum size of pool connections required. Default value is `5` |
 | `PROD_DB_USERNAME` | Database user's username that has read/write rights on `PROD_DB` |
 | `PROD_DB_PASSWORD` | Database user password for `PROD_DB_USERNAME` |
+| **Automatic updates for production** | |
+| `CRONTAB_ENABLE` | `true` to update crontab for automatic daily updates, any other value to disable|
+| `AUTO_UPDATE_TIME` | Daily update time (12h or 24h format) if `CRONTAB_ENABLE` is `true`
 
 Les volumes du container à monter:
  

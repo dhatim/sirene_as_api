@@ -82,4 +82,8 @@ Rails.application.configure do
   end
 
   config.log_level = :warn
+
+  if ENV['CRONTAB_ENABLE'] == 'true'
+    `cron && whenever --update-crontab`
+  end
 end

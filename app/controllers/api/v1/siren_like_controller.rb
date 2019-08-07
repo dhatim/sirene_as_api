@@ -7,7 +7,7 @@ class API::V1::SirenLikeController < ApplicationController
           Etablissement.where(:siren => query).order('is_siege DESC')
         else
           Etablissement.where("siren LIKE :query",
-                              query: "#{query}%")
+                              query: "#{query}%").limit(20)
         end
 
       if r.nil?

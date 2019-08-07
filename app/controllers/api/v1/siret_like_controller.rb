@@ -7,7 +7,7 @@ class API::V1::SiretLikeController < ApplicationController
           Etablissement.find_by(siret: query)
         else
           Etablissement.where("siret LIKE :query",
-                              query: "#{query}%")
+                              query: "#{query}%").limit(20)
         end
       if r.nil?
         render json: { message: 'no results found' }, status: 404

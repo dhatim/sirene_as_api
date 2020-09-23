@@ -1,0 +1,36 @@
+development:
+  update_database_v1_job:
+    cron: '0 6 * * *'
+    class: 'UpdateDatabaseV1Job'
+    queue: 'auto_updates'
+  update_database_job:
+    cron: '0 8 * * *'
+    class: 'UpdateDatabaseJob'
+    queue: 'auto_updates'
+
+sandbox:
+  update_database_v1_job:
+    cron: '0 6 * * *'
+    class: 'UpdateDatabaseV1Job'
+    queue: 'auto_updates'
+  update_database_job:
+    cron: '0 8 * * *'
+    class: 'UpdateDatabaseJob'
+    queue: 'auto_updates'
+
+production:
+  update_database_v1_job:
+    cron: '30 0 * * *'
+    class: 'UpdateDatabaseV1Job'
+    queue: 'auto_updates'
+  update_database_job:
+    cron: '0 2 * * *'
+    class: 'UpdateDatabaseJob'
+    queue: 'auto_updates'
+
+# à supprimer à partir d'ici
+# pour ne pas utiliser l'API de l'INSEE
+  daily_update_job:
+    cron: '15 0 * * *'
+    class: 'DailyUpdateJob'
+    queue: 'auto_updates'

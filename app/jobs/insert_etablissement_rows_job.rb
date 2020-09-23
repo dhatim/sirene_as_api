@@ -14,18 +14,17 @@ class InsertEtablissementRowsJob < EtablissementRowJobs
 
     ar_values_string = etablissements.map { |h| value_string_from_enterprise_hash(h) }.join(', ')
 
-    ar_query_string = "INSERT INTO etablissements (#{ar_keys.join(',')})
+    ar_query_string = "INSERT INTO etablissements_v2 (#{ar_keys.join(',')})
                       VALUES
                       #{ar_values_string};"
-
     insert(ar_query_string)
     true
   end
 
   def insert(ar_query_string)
     ActiveRecord::Base.connection.execute(ar_query_string)
-  rescue StandardError => error
-    stdout_error_log "Error: Cannot insert etablissement attributes. Cause : #{error.class}
+  rescue StandardError => e
+    stdout_error_log "Error: Cannot insert etablissement attributes. Cause : #{e.class}
       Make sure that your Solr server is launched for the right environment and accessible."
     exit
   end

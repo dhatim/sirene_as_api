@@ -14,14 +14,13 @@ Bundler.require(*Rails.groups)
 
 module SireneAsAPI
   class Application < Rails::Application
+    config.time_zone = 'Europe/Paris'
     config.api_only = true
     config.active_record.schema_format = :sql
 
     # Background tasks
-    config.active_job.queue_adapter = :resque
-
-    # Custom config
-    config.switch_server = config_for(:switch_server)
+    config.active_job.queue_adapter = :sidekiq
+    config.active_job.queue_name_prefix = "sirene_api_#{Rails.env}"
 
     config.autoload_paths +=
       %W[#{config.root}/lib

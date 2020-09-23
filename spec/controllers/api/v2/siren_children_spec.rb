@@ -5,9 +5,9 @@ describe API::V2::SirenChildrenController do
     siren = '833057201'
 
     context 'SIRENE 404' do
-      let!(:etablissement) {
+      let!(:etablissement) do
         create(
-          :etablissement,
+          :etablissement_v2,
           nom_raison_sociale: 'foobarcompany',
           siren: siren,
           siret: '123456',
@@ -17,7 +17,7 @@ describe API::V2::SirenChildrenController do
           longitude: '1',
           latitude: '2'
         )
-      }
+      end
 
       it 'returns 404' do
         get '/v2/siren/111111/etablissements'
@@ -27,9 +27,9 @@ describe API::V2::SirenChildrenController do
     end
 
     context 'SIRENE 200' do
-      let!(:etablissement) {
+      let!(:etablissement) do
         create(
-          :etablissement,
+          :etablissement_v2,
           nom_raison_sociale: 'foobarcompany',
           siren: siren,
           siret: '123456',
@@ -39,10 +39,10 @@ describe API::V2::SirenChildrenController do
           longitude: '1',
           latitude: '2'
         )
-      }
-      let!(:etablissement2) {
+      end
+      let!(:etablissement2) do
         create(
-          :etablissement,
+          :etablissement_v2,
           nom_raison_sociale: 'foobarcompany',
           siren: siren,
           siret: '123457',
@@ -52,10 +52,10 @@ describe API::V2::SirenChildrenController do
           longitude: '1',
           latitude: '2'
         )
-      }
-      let!(:etablissement3) {
+      end
+      let!(:etablissement3) do
         create(
-          :etablissement,
+          :etablissement_v2,
           nom_raison_sociale: 'foobarcompany',
           siren: siren,
           siret: '123458',
@@ -65,7 +65,7 @@ describe API::V2::SirenChildrenController do
           longitude: '1',
           latitude: '2'
         )
-      }
+      end
       it 'returns 200' do
         get "/v2/siren/#{siren}/etablissements"
 
@@ -80,4 +80,3 @@ describe API::V2::SirenChildrenController do
     end
   end
 end
-

@@ -51,4 +51,7 @@ Rails.application.configure do
   config.logstasher.backtrace = true
 
   config.logger = Logger.new("#{Rails.root}/log/development.log")
+
+  # Redis database URL
+  config.redis_database = 'redis://localhost:6379/0'
 end

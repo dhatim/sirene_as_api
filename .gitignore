@@ -57,3 +57,4 @@ coverage/*
 .idea/
 
 /target
+docker-sirene_etalab.iml

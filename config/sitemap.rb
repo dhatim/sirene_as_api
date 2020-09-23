@@ -1,4 +1,4 @@
-SitemapGenerator::Sitemap.default_host = "http://entreprise.data.gouv.fr"
+SitemapGenerator::Sitemap.default_host = 'http://entreprise.data.gouv.fr'
 
 SitemapGenerator::Sitemap.create do
   # https://github.com/kjvarga/sitemap_generator
@@ -23,9 +23,9 @@ SitemapGenerator::Sitemap.create do
   #     add article_path(article), :lastmod => article.updated_at
   #   end
 
-  Etablissement.find_each do |etab|
+  EtablissementV2.find_each do |etab|
     add "/etablissement/#{etab.siret}",
-      lastmod: etab.updated_at,
-      changefreq: 'monthly'
+        lastmod: etab.updated_at,
+        changefreq: 'monthly'
   end
 end

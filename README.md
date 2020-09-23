@@ -1,19 +1,12 @@
+## ⚠ Changements importants ⚠
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/cb7334374140808435c3/maintainability)](https://codeclimate.com/github/etalab/sirene_as_api/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/cb7334374140808435c3/test_coverage)](https://codeclimate.com/github/etalab/sirene_as_api/test_coverage)
-
-## ⚠ Breaking Changes ⚠
-
-#### Mise à jour au 23/07/19 :
-L'API renvoie pour le moment les données de mi-avril 2019. Nous travaillons à la prochaine version qui nous permettra de renvoyer les données à jour.
-Attention, la nouvelle version nécessite de drop puis réinstaller la base de donnée.
+Les endpoints V3 sont disponibles en béta. Les endpoints V1 et V2 ainsi que l'import des fichiers ancien format sont considérés dépréciés et ne recevront plus de développement futur.
 
 ### Comment me tenir au courant des prochains changements ?
 
 Notre site frontend présente dorénavant la possibilité de s'inscrire sur [une mailing-list](https://entreprise.data.gouv.fr/api_doc). Si vous utilisez notre API régulièrement, nous vous conseillons de vous inscrire.
 
 Vous pouvez également nous contacter au travers des issues de ce repo GitHub.
-
-
 
 # SIRENE_as_api
 
@@ -31,7 +24,7 @@ Le projet se découpe en trois sous-projets :
 
 - Une interface web de recherche exploitant l'API en Vue.js : [entreprise.data.gouv.fr](https://github.com/etalab/entreprise.data.gouv.fr)
 
-Nouveau ! l'[API RNA](https://github.com/etalab/rna_as_api) est disponible !
+- l'[API RNA](https://github.com/etalab/rna_as_api) est aussi disponible
 
 ## Essayez l'API
 
@@ -42,7 +35,7 @@ Ou bien par le site front-end : https://entreprise.data.gouv.fr/
 ## Qualification des fichiers mis à disposition par l'INSEE
 
 L'ensemble des fichiers mis à disposition pour le SIRENE se trouvent sur
-[data.gouv.fr](http://www.data.gouv.fr/fr/datasets/base-sirene-des-entreprises-et-de-leurs-etablissements-siren-siret/).
+[data.gouv.fr](https://www.data.gouv.fr/fr/datasets/base-sirene-des-entreprises-et-de-leurs-etablissements-siren-siret/).
 On y trouve chaque début de mois un fichier dit stock qui recense toutes
 les entreprises et leurs établissements.
 Ces fichiers stocks mensuels sont accompagnés de fichiers de mises à jour
@@ -51,25 +44,13 @@ mensuelles dites "de recalage".
 
 ### Fichiers stocks mensuels
 
-Il s'agit de fichiers mensuels contenant toute la base de donnée.
-Règle de nommage : sirene_YYYYMM_L_M.zip, YYYY => 2017, MM => 01 pour janvier
+Les données sont découpés en deux fichiers :
+- les unités légales
+- les établissements
+-
+Il s'agit de fichiers mensuels contenant toute la base de donnée, incluant donc aussi l'historique contenant les unités légales et établissements fermés.
 
-### Fichiers de mises à jour quotidiennes
-
-Il s'agit de fichiers quotidiens mettant à jour la base de donnée.
-Règle de nommage : sirene_YYYYddd, YYY => 2017, ddd => 032 pour le 1er février car 32e
-jour de l'année
-
-Ces fichiers paraissent dans la nuit suivant chaque jour ouvré.
-Pour en savoir plus, rendez vous sur la [faq de l'insee](https://www.sirene.fr/sirene/public/faq?sirene_locale=fr)
-
-Une commande Rake est disponible pour mettre à jour la base de données
-(Cf. liste des tâches plus bas). Toute mise à jour est suivie par une
-réindexation automatique.
-
-### Limitations des fichiers Sirene
-
-L'INSEE ne délivre pour le moment pas les établissements refusant la prospection commerciale. Ces établissements sont donc manquants de la base Sirene.
+P.S: le fichier des établissements n'est pas téléchargé depuis data.gouv.fr mais depuis data.cquest.org qui fournit des fichiers géo-codés.
 
 # Requêtes V1
 
@@ -122,13 +103,13 @@ Les options suivantes de filtrage sont disponibles :
 
 | Filtrage désiré                                           | Requête GET               | Valeur                                              |
 |-----------------------------------------------------------|---------------------------|-----------------------------------------------------|
-| Activité principale de l'entreprise (code NAF)                       | activite_principale       | Le code `activité principale` (code NAF)                |
+| Activité principale de l'entreprise (code NAF)            | activite_principale       | Le code `activité principale` (code NAF)            |
 | Code postal                                               | code_postal               | Le code postal désiré                               |
-| Code commune INSEE                                             | code_commune              | Le code INSEE de la commune                     |
+| Code commune INSEE                                        | code_commune              | Le code INSEE de la commune                         |
 | Departement                                               | departement               | Le departement désiré                               |
 | Appartenance au champs de l'économie sociale et solidaire | is_ess                    | `O` pour Oui, `N` pour Non, `I` pour Invalide       |
 | Entreprises individuelles                                 | is_entrepreneur_individuel| `yes` pour Oui, `no` pour Non                       |
-| Tranche effectif salarié de l'entreprise                                 | tranche_effectif_salarie_entreprise | le code INSEE pour cette tranche d'effectif salarié |
+| Tranche effectif salarié de l'entreprise                  | tranche_effectif_salarie_entreprise | le code INSEE pour cette tranche d'effectif salarié |
 
 D'autres facettes pourront être implémentées en fonction des retours utilisateurs.
 
@@ -261,11 +242,53 @@ On peut également demander ce retour au format GeoJSON :
 
     curl 'localhost:3000/v2/siren/:SIREN/etablissements_geojson'
 
+# Requêtes v3
+
+L'INSEE fournit depuis le 1er janvier 2019 des fichiers dans un nouveau format, l'API v3 reflète le contenu de ces nouveaux fichiers.
+Il y a donc deux ressources distinctes : les unités légales (SIREN) et les établissements physiques (SIRET).
+
+Sont uniquement fournit des fichiers de stocks mensuels, afin de rester à jour l'API récupère les modifications quotidiennes via [l'API de l'INSEE](api.insee.fr).
+
+Vous devez ouvrir un compte afin d'obtenir un token pour que l'API se mette à jour toute seule. [À voir ici](#token-de-lapi-insee).
+
+## Recherche directe par SIREN ou SIRET
+
+La requête directe pour une unité légale se fait ainsi :
+
+    curl 'localhost:3000/v3/unites_legales/:siren'
+
+La requête directe pour un établissement se fait ainsi :
+
+    curl 'localhost:3000/v3/etablissements/:siret'
+
+## Recherche plus large
+
+Pour ces endpoints, vous pouvez filtrer les résultats par n'importe lequel des champs des ressources demandées en passant les paramètres dans la requête. Exemple :
+
+    # recherche de tous les établissments ouverts pour un siren donné
+    curl 'localhost:3000/v3/etablissements/?etat_administratif=A&siren=345184428'
+
+    # recherche de toutes les unité légales ouvertes du code postal 59 380
+    curl 'localhost:3000/v3/unites_legales/?etat_administratif=A&code_postal=59380'
+
+La pagination est controlée par les paramètres `page` et `per_page`.
+Les options Solr telles que le full-text ou la géolocalisation ne sont pas encore disponibles sur ces endpoints.
+
 # Installation et configuration
 
 Pour installer rapidement & efficacement l'API en environnement de production,
 vous pouvez vous referer a la documentation sur [sirene_as_api_ansible](https://github.com/etalab/sirene_as_api_ansible)
 et utiliser les scripts de déploiement automatiques.
+
+## Token de l'API INSEE
+
+Afin de récupérer automatiquement les mises à jours quotidiennes de l'API SIRENE de l'INSEE il est nécessaire de renseigner `insee_credentials` dans `config/secrets.yml`.
+
+Pour obtenir un token rendez-vous sur https://api.insee.fr/ dans : "Mes Applications"->sélectionnez ou créer une application->"Clefs et Jetons d'accès"->copiez la chaine de charactère sous "Génération des jetons d'accès" (dans l'exemple de code)
+
+_Attention_, il ne s'agit ni de la _Clef du consommateur_, ni du _Secret du consommateur_, ni du _Jeton d'accès_.
+
+Si vous ne souhaitez pas avoir les mises à jours via l'API commentez ou supprimer le bloc de code indiqué dans `config/schedule.yml`.
 
 ## Nouveau : Installation avec Docker
 
@@ -445,6 +468,10 @@ C'est prêt ! vous pouvez lancer le serveur :
 
 ## Mises à jour / Administration
 
+Les données ayant changé de format en 2019, nous assurons une continuité de service en convertissant les fichiers du nouveau format vers l'ancien. Il est donc pour le moment toujours possible d'utiliser les endpoints V1 et V2, bien qu'ils soient dépréciés.
+
+### Fichiers ancien format (Endpoints V1 et V2)
+
 Tâches disponibles : `rake -T`, ou spécifiques sirene_as_api : `bundle exec rake -T sirene_as_api`
 
 Remplissage base (dernier stock + mises a jour) : ~ 3 heures, patching variable
@@ -478,29 +505,34 @@ Suppression database, en cas de problèmes :
 
 Il est conseillé de rajouter RAILS_ENV=production au début des commandes en environnement de production.
 
-### Mises à jour automatique (Infrastructure à double server)
+#### Mises à jour automatiques
 
-Pour assurer une continuité de service 24/7 et ce même pendant la reconstruction de la base de donnée, nous utilisons un système de double-server. Si vous désirez les réglages pour un seul server, reportez vous à la section suivante.
+Il y a deux processus de mises à jour:
 
-Nous utilisons la commande `bundle exec rake sirene_as_api:dual_server_update` pour effectuer la mise à jour : le server va effectuer une mise à jour, tester si tout fonctionne, puis effectuer un switch d'IP fallback sur lui-même.
+- pour la v1
+- pour le reste
 
-Si vous avez 2 servers, vous pouvez modifier /config/switch_server.rb pour ajouter vos propres valeurs.
+##### Base de données v1
 
-### Mises à jour automatiques (1 seul server)
+    bundle exec rake sirene_as_api:automatic_update_database
 
-La commande `bundle exec rake sirene_as_api:automatic_update_database` permet la mise à jour automatique de la base de donnée.
-Pour modifier la fréquence des mises à jour, modifiez config/schedule.rb
+##### Base de données v2/V3
+
+    bundle exec rake sirene:update_database
+
+##### Modifier la fréquence des mises à jour
+
+Pour modifier la fréquence des mises à jour, modifiez config/schedule.yml
 puis exécutez la commande :
 
-    whenever --update-crontab
+    bundle exec rake sidekiq_cron:load
 
-La gem [whenever](https://github.com/javan/whenever) s'occupe de mettre à jour
-vos tâches cron. Par défaut la mise à jour se fait à 4h30 du matin.
+La gem [Sidekiq-cron](https://github.com/ondrejbartas/sidekiq-cron) gère les tâches indépendament de cron. Par défaut la mise à jour se fait à 0h30 du matin.
 
 L'API reste disponible sans interruptions pendant ce process, excepté ~ 3 à 4 heures lors de la
 suppression / réimportation du fichier stock au début de chaque mois.
 
-## Sunspot / Solr
+#### Sunspot / Solr
 
   Le serveur Solr doit être actif pour toute requête ou changement sur la
   base de donnée.
@@ -509,29 +541,29 @@ suppression / réimportation du fichier stock au début de chaque mois.
   problèmes, il est par exemple conseillé de désactiver le serveur `test`
   si vous souhaiter effectuer des opérations en `development`.
 
-### Demarrer le serveur
+#### Demarrer le serveur
 
     bundle exec rake sunspot:solr:start
 
-### Arreter le serveur
+#### Arreter le serveur
 
     bundle exec rake sunspot:solr:stop
 
-### Réindexation
+#### Réindexation
 
 La réindexation est automatique après un changement appliqué à la base de
 donnée, mais il est également possible de réindexer manuellement :
 
     bundle exec rake sunspot:reindex
 
-### Construction du dictionnaire de suggestions
+#### Construction du dictionnaire de suggestions
 
 Le dictionnaire se reconstruit automatiquement après un changement dans la base de donnée,
 ou avec la commande suivante :
 
     bundle exec rake sirene_as_api:build_dictionary
 
-# Problèmes fréquents
+#### Problèmes fréquents
 
 Si l'API ne renvoie aucun résultat sur la recherche `fulltext` mais que la recherche `siret` fonctionne, vous avez sans doute besoin de réindexer. Tentez `RAILS_ENV=MonEnvironnement bundle exec rake sunspot:solr:reindex` (le server solr doit être actif).
 
@@ -546,6 +578,67 @@ En cas d'erreur 404 - Solr not found, assurez vous que le fichier /solr/MonEnvir
 
 Si tout fonctionne sauf les suggestions, c'est probablement que le dictionnaire de suggestions n'a pas été construit. Executez la commande : `RAILS_ENV=MonEnvironnement bundle exec rake sirene_as_api:build_dictionary`
 
+### Fichiers nouveau format (Endpoint V3)
+
+L'import pour les fichiers V3 a été entièrement réecrit et utilise maintenant la librairie sidekiq-cron. Il est possible de lancer sidekiq avec la commande `bundle exec sidekiq`.
+
+La base devrait lancer une mise à jour automatiquement selon les horaires de la configuration définie dans `config/schedule.yml`. La configuration par défaut est pour les environnements sandbox et production.
+
+Les informations relatives aux stocks sont enregistrées en base de données. Un stock avec un statut PENDING ou LOADING indique une opération en cours et empêche de relancer l'opération d'import.
+
+#### Mises à jour automatiques
+
+Il est conseillé de lancer sidekiq non pas manuellement mais avec l'ajout d'un service (à l'aide de systemd sur server debian ou ubuntu). Exemple de configuration possible du service :
+
+```
+[Service]
+Type=simple
+WorkingDirectory=/var/www/{{ app_name }}/current
+# If you use rbenv:
+# ExecStart=/bin/bash -lc 'bundle exec sidekiq -e production'
+# If you use the system's ruby:
+ExecStart={{ bundle_path }} exec sidekiq -e {{ rails_env }} -L {{ log_file }} -C {{ config_file }}
+User={{ service_user }}
+Group={{ service_group }}
+UMask=0002
+
+# if we crash, restart
+RestartSec=1
+Restart=on-failure
+
+# This will default to "bundler" if we don't specify it
+SyslogIdentifier=sidekiq
+
+[Install]
+```
+
+Les tâches sidekiq s'éxecutent automatiquement en arrière plan. L'installation d'un server Redis est nécessaire pour l'enregistrement de la liste des tâches :
+
+`sudo apt-get install redis-server`
+
+Pour relier le serveur Redis à l'application, il est nécessaire de fournir son adresse dans la configuration Rails :
+
+`config.redis_database = 'redis://localhost:6379/1'`
+
+#### Mise à jour manuelle immédiate
+
+Il est possible de lancer une mise à jour immédiate par la console rails. Pour l'environnement `development` :
+
+```
+rails c development
+UpdateDatabaseJob.perform_now
+```
+
+Une fois celle-ci terminée il est possible de lancer les mises à jours quotidiennes :
+
+```ruby
+DailyUpdateJob.perform_now
+```
+
 # License
 
 Ce projet est sous [license MIT](https://fr.wikipedia.org/wiki/Licence_MIT)
+
+# Contributions
+
+Vous pouvez contribuer à ce projet open-source, par exemple [en nous ouvrant une PR](https://github.com/etalab/sirene_as_api/pulls).

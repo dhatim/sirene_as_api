@@ -1,5 +1,6 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
+  config.active_job.queue_adapter = :test
 
   # The test environment is used exclusively to run your application's
   # test suite. You never need to work with it otherwise. Remember that
@@ -41,4 +42,7 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
 
   config.logstasher.enabled = true
+
+  # Redis database URL
+  config.redis_database = 'redis://localhost:6379/0'
 end

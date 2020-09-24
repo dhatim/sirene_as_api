@@ -6,6 +6,7 @@ RUN apt-get -o Acquire::Check-Valid-Until=false update -qq && \
     echo "deb http://repos.azulsystems.com/ubuntu stable main" >> /etc/apt/sources.list.d/zulu.list && \
     apt-get -o Acquire::Check-Valid-Until=false update -qq && \
     apt-get install -y --no-install-recommends build-essential \
+    git \
     libpq-dev \
     postgresql-client \
     # for Solr

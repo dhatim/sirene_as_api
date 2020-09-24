@@ -28,7 +28,7 @@ class API::V1::FullTextController < ApplicationController
   end
 
   def search_with_solr_options(keyword, page, per_page)
-    search = Etablissement.search do
+    search = EtablissementV2.search do
       run_search_with_main_options(keyword)
 
       with_faceting_options
@@ -130,6 +130,7 @@ end
 def request_suggestions(query)
   response = SolrRequests.new(query).request_suggestions
   return [] unless response.is_a? Net::HTTPSuccess
+
   extract_suggestions(response.body)
 end
 
@@ -154,5 +155,6 @@ def spellcheck_custom(search, query)
     collation << search.spellcheck_suggestion_for(word)
   end
   return nil if collation.empty?
+
   collation.join(' ')
 end

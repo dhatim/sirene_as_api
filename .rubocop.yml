@@ -1,20 +1,35 @@
+# Warning:
+# run `bundle exec rubocop` like Travis
+# and not `rubocop` only
 AllCops:
   Exclude:
+    - 'vendor/**/*'
     - 'Guardfile'
     - 'db/migrate/*'
     - 'bin/*'
     - 'config/initializers/*'
+    # TODO: remove when dropping v1
+    - 'spec/controllers/api/v1/**/*'
+    - 'app/interactors/**/*'
+    - 'app/controllers/api/v1/**/*'
 
-Metrics/LineLength:
-  Max: 120
+Layout/LineLength:
+  Enabled: false
 
 Metrics/BlockLength:
   Exclude:
     - 'spec/interactors/*'
     - 'spec/controllers/api/v1/*'
+    - 'spec/support/shared_examples/*'
     - 'db/schema.rb'
+    - 'spec/factories/*'
+    - 'config/routes.rb'
+  ExcludedMethods:
+    - 'describe'
+    - 'context'
+    - 'namespace'
 
-Documentation:
+Style/Documentation:
   Enabled: false
 
 Style/FrozenStringLiteralComment:
@@ -22,7 +37,64 @@ Style/FrozenStringLiteralComment:
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
+  Exclude:
+    - 'app/channels/**/*'
+    - 'app/concepts/**/*'
+    - 'spec/support/trailblazer.rb'
+    - 'config/application.rb'
 
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:
     default: '{}'
+
+Style/SignalException:
+  Exclude:
+    - 'app/concepts/**/*'
+
+Naming/VariableNumber:
+  EnforcedStyle: snake_case
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Lint/AmbiguousOperator:
+  Exclude:
+    - 'app/serializers/**/*'
+
+Lint/UnreachableCode:
+  Exclude:
+    - 'app/concepts/**/*'
+
+Naming/MethodParameterName:
+  AllowedNames:
+    - '_'
+    - 'to'
+
+# These Cops are not enabled by default:
+Layout/EmptyLinesAroundAttributeAccessor:
+  Enabled: true
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true
+Lint/DeprecatedOpenSSLConstant:
+  Enabled: true
+Lint/RaiseException:
+  Enabled: true
+Lint/StructNewOverride:
+  Enabled: true
+Style/ExponentialNotation:
+  Enabled: true
+Style/HashEachMethods:
+  Enabled: true
+Style/HashTransformKeys:
+  Enabled: true
+Style/HashTransformValues:
+  Enabled: true
+Style/SlicingWithRange:
+  Enabled: true
+Lint/MixedRegexpCaptureTypes:
+  Enabled: true
+Style/RedundantRegexpCharacterClass:
+  Enabled: true
+Style/RedundantRegexpEscape:
+  Enabled: true
+# end Cops to enable

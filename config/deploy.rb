@@ -2,15 +2,12 @@ require 'mina/bundler'
 require 'mina/rails'
 require 'mina/git'
 require 'mina/rbenv'
-require 'mina/whenever'
 require 'colorize'
 
 ENV['domain'] || raise('no domain provided'.red)
 
 ENV['to'] ||= 'sandbox'
-unless %w[sandbox production].include?(ENV['to'])
-  raise("target environment (#{ENV['to']}) not in the list")
-end
+raise("target environment (#{ENV['to']}) not in the list") unless %w[sandbox production].include?(ENV['to'])
 
 print "Deploy to #{ENV['to']}\n".green
 
@@ -44,15 +41,15 @@ set :shared_dirs, fetch(:shared_dirs, []).push(
   'tmp/files',
   'tmp/pids',
   'tmp/sockets',
-  '.last_monthly_stock_applied',
-  "solr/#{ENV['to']}",
-  'solr/pids'
+  '.last_monthly_stock_applied'
 )
 
 set :shared_files, fetch(:shared_files, []).push(
   'config/database.yml',
   "config/environments/#{ENV['to']}.rb",
-  'config/secrets.yml'
+  'config/secrets.yml',
+  'config/sidekiq.yml',
+  'config/sunspot.yml'
 )
 
 # This task is the environment that is loaded for all remote run commands, such as
@@ -76,7 +73,6 @@ task deploy: :remote_environment do
     # instance of your project.
     invoke :'git:clone'
     invoke :'deploy:link_shared_paths'
-    set :bundle_options, fetch(:bundle_options) + ' --clean'
     invoke :'bundle:install'
     invoke :'rails:db_migrate'
 
@@ -85,27 +81,23 @@ task deploy: :remote_environment do
         command %{mkdir -p tmp/}
         command %{touch tmp/restart.txt}
 
-        invoke :whenever_update
         invoke :solr
       end
 
+      invoke :sidekiq
       invoke :passenger
-      invoke :warning_info
     end
   end
 end
 
-task whenever_update: :remote_environment do
-  set :whenever_name, "sirene_api_#{ENV['to']}" # default value is based on domain name, and it is used to match in crontab !
-  set :bundle_bin, '/usr/local/rbenv/shims/bundle' # with our rbenv config it cannot be found...
-
-  # whenever environement comes from fetch(:rails_env)
-  invoke :'whenever:update'
-end
-
 task solr: :remote_environment do
   comment 'Restarting Solr service'.green
-  command "sudo systemctl restart solr_sirene_api_#{ENV['to']}"
+  command 'sudo systemctl restart solr'
+end
+
+task :sidekiq do
+  comment 'Restarting Sidekiq (reloads code)'.green
+  command %{sudo systemctl restart sidekiq_sirene_api_#{ENV['to']}_1}
 end
 
 task passenger: :remote_environment do
@@ -118,13 +110,4 @@ task passenger: :remote_environment do
       echo 'Skipping: no passenger app found (will be automatically loaded)'
     fi
   }
-end
-
-task warning_info: :remote_environment do
-  warning_sign = '\xE2\x9A\xA0'
-  comment %{#{warning_sign} #{warning_sign} #{warning_sign} #{warning_sign}}.yellow
-  comment %{#{warning_sign} If it's the first install (or a reboot) run the folowing commands #{warning_sign}}.yellow
-  comment %{#{warning_sign} in the following directory: #{fetch(:deploy_to)}/current #{warning_sign}}.yellow
-  comment %{bundle exec rake sirene_as_api:populate_database RAILS_ENV=#{ENV['to']}}.green
-  comment %{#{warning_sign} #{warning_sign} #{warning_sign} #{warning_sign}}.yellow
 end

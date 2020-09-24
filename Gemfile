@@ -20,14 +20,20 @@ gem 'redis', '~> 3.0'
 gem 'redis-namespace'
 gem 'redis-objects'
 gem 'resque'
+gem 'sidekiq'
+gem 'sidekiq-cron'
 gem 'sinatra', '~> 2.0.2'
 
 # Sunspot / Solr friends
 gem 'sunspot_rails'
 gem 'sunspot_solr'
 
-gem 'rubyzip'
-gem 'smarter_csv'
+# Serializer
+gem 'active_model_serializers', '~> 0.10.0'
+
+# Import of data files
+gem 'activerecord-import'
+gem 'smarter_csv', git: 'https://github.com/tilo/smarter_csv.git', ref: '2b71026'
 
 gem 'ruby-progressbar'
 # Gem progress_bar required for displaying progress in rake sunspot:reindex
@@ -47,10 +53,16 @@ gem 'interactor', '~> 3.0'
 gem 'interactor-rails', '~> 2.0'
 
 # Trailblazer
+gem 'trailblazer', '2.1.0.rc1'
+gem 'trailblazer-activity', '0.7.1'
+gem 'trailblazer-operation', '0.4.1'
 gem 'trailblazer-rails'
 
-# Gem for deploying cron jobs
-gem 'whenever', require: false
+# Map incoming requests to scopes
+gem 'has_scope'
+
+# Pagination
+gem 'pagy'
 
 gem 'sitemap_generator'
 
@@ -65,8 +77,10 @@ group :development, :test do
   gem 'pry'
   gem 'pry-byebug'
 
-  gem 'rspec-rails', '~> 3.5'
+  gem 'rspec-activejob'
+  gem 'rspec-collection_matchers'
   gem 'rspec-its'
+  gem 'rspec-rails', '~> 3.5'
   gem 'shoulda-matchers'
 
   gem 'guard'
@@ -84,6 +98,7 @@ group :test do
   gem 'simplecov'
   gem 'simplecov-console'
   gem 'timecop'
+  gem 'unindent'
   gem 'vcr'
   gem 'webmock'
 end
@@ -91,7 +106,6 @@ end
 group :development do
   gem 'brakeman', require: false
   gem 'mina'
-  gem 'mina-whenever'
   gem 'rails_best_practices'
   gem 'rubocop-checkstyle_formatter', require: false
   gem 'rubocop-rspec', require: false

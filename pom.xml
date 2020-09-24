@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.dhatim</groupId>
     <artifactId>root</artifactId>
-    <version>38.3.0</version>
+    <version>45.11.0</version>
   </parent>
 
   <groupId>com.dhatim</groupId>

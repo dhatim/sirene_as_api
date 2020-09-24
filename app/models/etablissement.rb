@@ -1,31 +1,8 @@
-# ADD constants about nature_mise_a_jour out of commercial diffusion for better simplicity
-
 class Etablissement < ApplicationRecord
-  attr_accessor :csv_path
+  include Scopable::Model
+  belongs_to :unite_legale, optional: true
 
-  searchable do
-    text :nom_raison_sociale
-    text :libelle_activite_principale_entreprise
-    text :libelle_commune
-    text :l4_normalisee
-    text :l2_normalisee
-    text :sigle
-    text :enseigne
-    # Enseigne must be both string and text to use fulltext and faceting
-    string :enseigne
-    string :activite_principale
-    string :code_postal
-    string :nature_mise_a_jour
-    string :is_ess
-    string :nature_entrepreneur_individuel
-    string :statut_prospection
-    string :tranche_effectif_salarie_entreprise
-    string :departement
-    string :commune
-    string :is_siege
-    string :tranche_effectif_salarie_entreprise
-    latlon(:location) { Sunspot::Util::Coordinates.new(latitude, longitude) }
-  end
+  AUTHORIZED_FIELDS = %w[id siret nic siren statut_diffusion unite_legale unite_legale_id date_dernier_traitement created_at updated_at].freeze
 
   def self.latest_mise_a_jour
     # probabilist search for true latest update. Date time must be exact but a wrong time is tolerated
@@ -42,4 +19,15 @@ class Etablissement < ApplicationRecord
     ActiveRecord::Base.connection.exec_query(sql).first["max"]
   end
 
+  def self.header_mapping
+    ETABLISSEMENT_HEADER_MAPPING
+  end
+
+  def nullify_non_diffusable_fields
+    return if statut_diffusion == 'O'
+
+    attributes.each_key do |attribute|
+      send("#{attribute}=", nil) unless AUTHORIZED_FIELDS.include?(attribute)
+    end
+  end
 end
